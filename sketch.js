@@ -1,54 +1,49 @@
+const Engine = Matter.Engine;
+const World= Matter.World;
+const Bodies = Matter.Bodies;
 
-var wall, thickness;
-var bullet, speed, weight;
+var engine, world;
+var ground,ball;
+var binImg,bin;
 
-function setup() {
-  createCanvas(1600,400);
+function preload(){
+    binImg = loadImage("Images/dustbingreen.png");
+}
+function setup(){
+    var canvas = createCanvas(1200,600);
+    engine = Engine.create();
+    world = engine.world;
 
-thickness=random(22, 83);
-speed=random(22, 55);
-weight=random(30, 52);
+    ground = new Ground();
+    crumpledPaper = new Paper();
 
- bullet=createSprite(50, 200, 50, 10);
-bullet.velocityX = speed;
-bullet.shapeColor="white";
+    bin = createSprite(964,520,20,20);
+    bin.addImage(binImg);
+    bin.scale = 0.45;
 
-wall=createSprite(1000, 200, thickness, height/2);
-wall.shapeColor=(80,80,80);
-
+    binPart1 = new Dustbin(902,505,10,120);
+    binPart2 = new Dustbin(962,565,130,10);
+    binPart3 = new Dustbin(1024,505,10,120);
 }
 
-function draw() {
-  background(0);  
+function draw(){
+    background(0);
+    Engine.update(engine);
 
-  
+    //text(mouseX+","+mouseY,200,200);
 
-    if(hasCollided(bullet, wall)){
-
-      bullet.velocityX=0;
-      var damage=0.5 * weight * speed * speed/(thickness* thickness* thickness);
+    
+    ground.display();
+    crumpledPaper.display();
+    binPart1.display();
+    binPart2.display();
+    binPart3.display(); 
       
-      
-      if(damage>10){
-        wall.shapeColor=color(225, 0, 0);
-      }
-  
-      if(damage<10){
-        wall.shapeColor=color(0, 255, 0);
-      }
+    drawSprites();
+}
+
+function keyPressed(){
+    if(keyCode === UP_ARROW){
+        Matter.Body.applyForce(crumpledPaper.body,crumpledPaper.body.position,{x:74,y:-75});
     }
-  drawSprites();
-}
-
-function hasCollided(Lbullet, Lwall){
-
-bulletRightEdge=Lbullet.x + Lbullet.width;
-wallLeftEdge = Lwall.x;
-
-if(bulletRightEdge>=wallLeftEdge){
-
-  return true;
-}
-
-return false;
 }
